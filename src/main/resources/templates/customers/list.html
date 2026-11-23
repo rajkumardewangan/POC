@@ -8,20 +8,40 @@
 <body>
     <div th:replace="~{fragments/nav :: nav}"></div>
 
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Customers</h1>
-            <a th:href="@{/customers/new}" class="btn btn-primary">Add Customer</a>
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h1 class="mb-0">Customers</h1>
+            <div class="d-flex gap-2">
+                <a th:href="@{/customers/retention}" class="btn btn-outline-dark">Retention Summary</a>
+                <a th:href="@{/customers/new}" class="btn btn-primary">Add Customer</a>
+            </div>
         </div>
+
+        <form th:action="@{/customers}" method="get" class="card border-0 shadow-sm mb-3">
+            <div class="card-body row g-2 align-items-center">
+                <div class="col-md-8">
+                    <input type="text" name="search" class="form-control" placeholder="Search by name or phone" th:value="${search}">
+                </div>
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                    <a th:href="@{/customers}" class="btn btn-outline-secondary w-100">Clear</a>
+                </div>
+            </div>
+        </form>
 
         <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 
-        <table class="table table-striped table-hover">
+        <div th:if="${topCustomer != null}" class="alert alert-info">
+            Most frequent customer: <strong th:text="${topCustomer.name}"></strong> with <strong th:text="${topCustomer.visitCount}"></strong> visits.
+        </div>
+
+        <table class="table table-striped table-hover align-middle">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Phone</th>
                     <th>Email</th>
+                    <th>Visits</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -31,7 +51,11 @@
                     <td th:text="${customer.phone}"></td>
                     <td th:text="${customer.email}"></td>
                     <td>
-                        <a th:href="@{/customers/{id}/edit(id=${customer.id})}" class="btn btn-sm btn-secondary">Edit</a>
+                        <span class="badge bg-primary" th:text="${customer.visitCount}">0</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/customers/{id}(id=${customer.id})}" class="btn btn-sm btn-info text-white me-1">History</a>
+                        <a th:href="@{/customers/{id}/edit(id=${customer.id})}" class="btn btn-sm btn-secondary me-1">Edit</a>
                         <form th:action="@{/customers/{id}/delete(id=${customer.id})}" method="post" class="d-inline"
                               onsubmit="return confirm('Delete this customer?');">
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -39,7 +63,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(customers)}">
-                    <td colspan="4" class="text-center text-muted">No customers yet.</td>
+                    <td colspan="5" class="text-center text-muted">No customers yet.</td>
                 </tr>
             </tbody>
         </table>

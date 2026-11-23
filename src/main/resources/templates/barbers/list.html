@@ -8,20 +8,26 @@
 <body>
     <div th:replace="~{fragments/nav :: nav}"></div>
 
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Barbers</h1>
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h1 class="mb-0">Barbers</h1>
             <a th:href="@{/barbers/new}" class="btn btn-primary">Add Barber</a>
         </div>
 
         <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 
-        <table class="table table-striped table-hover">
+        <div th:if="${topBarber != null}" class="alert alert-info">
+            Top performer: <strong th:text="${topBarber.name}"></strong> with <strong th:text="${topBarber.appointmentCount}"></strong> appointments.
+        </div>
+
+        <table class="table table-striped table-hover align-middle">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Specialty</th>
                     <th>Phone</th>
+                    <th>Base Salary</th>
+                    <th>Appointments</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -30,8 +36,13 @@
                     <td th:text="${barber.name}"></td>
                     <td th:text="${barber.specialty}"></td>
                     <td th:text="${barber.phone}"></td>
+                    <td th:text="${'₹' + #numbers.formatDecimal(barber.baseSalary, 1, 2)}">₹0.00</td>
                     <td>
-                        <a th:href="@{/barbers/{id}/edit(id=${barber.id})}" class="btn btn-sm btn-secondary">Edit</a>
+                        <span class="badge bg-primary" th:text="${barber.appointmentCount}">0</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/barbers/{id}(id=${barber.id})}" class="btn btn-sm btn-info text-white me-1">History</a>
+                        <a th:href="@{/barbers/{id}/edit(id=${barber.id})}" class="btn btn-sm btn-secondary me-1">Edit</a>
                         <form th:action="@{/barbers/{id}/delete(id=${barber.id})}" method="post" class="d-inline"
                               onsubmit="return confirm('Delete this barber?');">
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -39,7 +50,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(barbers)}">
-                    <td colspan="4" class="text-center text-muted">No barbers yet.</td>
+                    <td colspan="6" class="text-center text-muted">No barbers yet.</td>
                 </tr>
             </tbody>
         </table>

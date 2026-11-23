@@ -62,9 +62,9 @@
                             <td th:if="${cell.type.name() == 'APPOINTMENT'}" th:rowspan="${cell.rowspan}">
                                 <div class="appt-cell">
                                     <div class="fw-bold" th:text="${cell.appointment.customer.name}"></div>
-                                    <div th:text="${cell.appointment.service.name}"></div>
+                                    <div th:text="${cell.appointment.serviceSummary}"></div>
                                     <span class="badge"
-                                          th:classappend="${cell.appointment.status.name() == 'SCHEDULED'} ? 'bg-primary' : (${cell.appointment.status.name() == 'COMPLETED'} ? 'bg-success' : 'bg-secondary')"
+                                          th:classappend="${cell.appointment.status.name() == 'SCHEDULED' ? 'bg-primary' : (cell.appointment.status.name() == 'IN_PROGRESS' ? 'bg-warning text-dark' : (cell.appointment.status.name() == 'COMPLETED' ? 'bg-success' : 'bg-secondary'))}"
                                           th:text="${cell.appointment.status}"></span>
                                 </div>
                             </td>

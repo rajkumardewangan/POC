@@ -23,6 +23,9 @@ public class Customer {
 
     private String email;
 
+    @Transient
+    private Long visitCount = 0L;
+
     public Customer() {
     }
 
@@ -62,5 +65,13 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Long getVisitCount() {
+        return visitCount;
+    }
+
+    public void setVisitCount(Long visitCount) {
+        this.visitCount = visitCount;
     }
 }

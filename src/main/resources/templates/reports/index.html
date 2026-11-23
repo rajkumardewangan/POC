@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f6f7fb;
+        }
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/nav :: nav}"></div>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h1 class="mb-1">Reports</h1>
+                <p class="text-muted mb-0">Business trends, revenue, and customer preference insights.</p>
+            </div>
+            <a th:href="@{/}" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Daily Report</h5>
+                        <p class="text-muted flex-grow-1">Revenue and appointment totals by day.</p>
+                        <a th:href="@{/reports/daily}" class="btn btn-dark mt-2">Open</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Weekly Report</h5>
+                        <p class="text-muted flex-grow-1">Performance trends across the week.</p>
+                        <a th:href="@{/reports/weekly}" class="btn btn-dark mt-2">Open</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Monthly Report</h5>
+                        <p class="text-muted flex-grow-1">Revenue and appointment summary by month.</p>
+                        <a th:href="@{/reports/monthly}" class="btn btn-dark mt-2">Open</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Payroll Report</h5>
+                        <p class="text-muted flex-grow-1">Attendance-based salary summary for each barber.</p>
+                        <a th:href="@{/reports/payroll}" class="btn btn-dark mt-2">Open</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Payroll Report</h5>
+                        <p class="text-muted flex-grow-1">Attendance-based salary summary for each barber.</p>
+                        <a th:href="@{/reports/payroll}" class="btn btn-dark mt-2">Open</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Service Preferences</h5>
+                        <p class="text-muted flex-grow-1">Customers grouped by preferred service.</p>
+                        <a th:href="@{/reports/service-preferences}" class="btn btn-dark mt-2">Open</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

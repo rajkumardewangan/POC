@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer History</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div th:replace="~{fragments/nav :: nav}"></div>
+
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+                <h1 class="mb-1" th:text="${customer.name}">Customer</h1>
+                <p class="text-muted mb-0" th:text="${customer.phone}">Phone</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/customers}" class="btn btn-outline-secondary">Back to Customers</a>
+                <a th:href="@{/customers/{id}/edit(id=${customer.id})}" class="btn btn-primary">Edit Customer</a>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase">Visits</h6>
+                        <p class="display-6 mb-0" th:text="${visitCount}">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase">Total Spent</h6>
+                        <p class="display-6 mb-0" th:text="${'₹' + #numbers.formatDecimal(totalSpent, 1, 2)}">₹0.00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase">Email</h6>
+                        <p class="fs-6 mb-0" th:text="${customer.email != null ? customer.email : 'No email on file'}">No email</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date &amp; Time</th>
+                            <th>Barber</th>
+                            <th>Service</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="appt : ${appointments}">
+                            <td th:text="${#temporals.format(appt.appointmentDateTime, 'dd-MMM-yyyy HH:mm')}">Date</td>
+                            <td th:text="${appt.barber.name}">Barber</td>
+                            <td th:text="${appt.serviceSummary}">Service</td>
+                            <td th:text="${'₹' + appt.service.price}">₹0.00</td>
+                            <td>
+                                <span class="badge bg-secondary"
+                                      th:classappend="${appt.status.name() == 'SCHEDULED' ? 'bg-primary' : (appt.status.name() == 'IN_PROGRESS' ? 'bg-warning text-dark' : (appt.status.name() == 'COMPLETED' ? 'bg-success' : 'bg-secondary'))}"
+                                      th:classappend="${appt.status.name() == 'COMPLETED' ? 'bg-success' : ''}"
+                                      th:classappend="${appt.status.name() == 'CANCELLED' ? 'bg-secondary' : ''}"
+                                      th:text="${appt.status}">Status</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(appointments)}">
+                            <td colspan="5" class="text-center text-muted py-4">No appointment history for this customer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

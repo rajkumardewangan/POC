@@ -1,7 +1,9 @@
 package com.example.salon.service;
 
 import com.example.salon.entity.SalonService;
+import com.example.salon.repository.AppointmentRepository;
 import com.example.salon.repository.SalonServiceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,9 +12,12 @@ import java.util.List;
 public class SalonServiceService {
 
     private final SalonServiceRepository salonServiceRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    public SalonServiceService(SalonServiceRepository salonServiceRepository) {
+    @Autowired
+    public SalonServiceService(SalonServiceRepository salonServiceRepository, AppointmentRepository appointmentRepository) {
         this.salonServiceRepository = salonServiceRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     public List<SalonService> findAll() {
@@ -29,6 +34,9 @@ public class SalonServiceService {
     }
 
     public void deleteById(Long id) {
+        if (appointmentRepository != null && appointmentRepository.countByServiceId(id) > 0) {
+            throw new IllegalStateException("Cannot delete service because it is used by one or more appointments.");
+        }
         salonServiceRepository.deleteById(id);
     }
 }

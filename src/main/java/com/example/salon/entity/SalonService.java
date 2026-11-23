@@ -31,14 +31,34 @@ public class SalonService {
     @Column(nullable = false)
     private Integer durationMinutes;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private ServiceGender gender = ServiceGender.MEN;
+
+    @Transient
+    private BigDecimal revenue = BigDecimal.ZERO;
+
     public SalonService() {
     }
 
     public SalonService(String name, String description, BigDecimal price, Integer durationMinutes) {
+        this(name, description, price, durationMinutes, ServiceGender.MEN);
+    }
+
+    public SalonService(String name, String description, BigDecimal price, Integer durationMinutes, ServiceGender gender) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.durationMinutes = durationMinutes;
+        this.gender = gender != null ? gender : ServiceGender.MEN;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void ensureGenderDefault() {
+        if (this.gender == null) {
+            this.gender = ServiceGender.MEN;
+        }
     }
 
     public Long getId() {
@@ -79,5 +99,21 @@ public class SalonService {
 
     public void setDurationMinutes(Integer durationMinutes) {
         this.durationMinutes = durationMinutes;
+    }
+
+    public ServiceGender getGender() {
+        return gender;
+    }
+
+    public void setGender(ServiceGender gender) {
+        this.gender = gender;
+    }
+
+    public BigDecimal getRevenue() {
+        return revenue;
+    }
+
+    public void setRevenue(BigDecimal revenue) {
+        this.revenue = revenue;
     }
 }
