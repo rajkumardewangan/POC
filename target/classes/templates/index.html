@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Men's Salon - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(180deg, #f8f5f3 0%, #f3efe9 100%);
+            color: #1f2937;
+        }
+
+        @media (max-width: 767.98px) {
+            .container {
+                padding-left: 0.85rem;
+                padding-right: 0.85rem;
+            }
+
+            .overview-hero {
+                padding: 1rem;
+            }
+
+            .top-actions {
+                width: 100%;
+            }
+
+            .top-actions .btn {
+                flex: 1 1 100%;
+                width: 100%;
+            }
+
+            .status-pill {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .dashboard-card {
+            border: 1px solid rgba(15, 23, 42, 0.04);
+            border-radius: 16px;
+            box-shadow: 0 8px 22px rgba(17, 24, 39, 0.04);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .metric-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #111827, #d1d5db);
+        }
+
+        .metric-card.primary::before { background: linear-gradient(90deg, #111827, #6b7280); }
+        .metric-card.success::before { background: linear-gradient(90deg, #166534, #4ade80); }
+        .metric-card.warning::before { background: linear-gradient(90deg, #92400e, #fbbf24); }
+        .metric-card.info::before { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+
+        .stat-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: clamp(1.6rem, 2vw, 2.2rem);
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        .stat-subtle {
+            font-size: 1rem;
+            color: #374151;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .top-actions .btn {
+            border-radius: 10px;
+            padding: 0.6rem 0.9rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-strip {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.38rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .overview-hero {
+            background: linear-gradient(135deg, #111827 0%, #394150 100%);
+            border-radius: 20px;
+            padding: 1.35rem 1.4rem;
+            color: #fff;
+            box-shadow: 0 14px 30px rgba(17, 24, 39, 0.12);
+        }
+
+        .overview-hero .muted-light {
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        .hero-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            line-height: 1.1;
+            margin-bottom: 0.25rem;
+        }
+
+        .overview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.09);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 999px;
+            padding: 0.45rem 0.8rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #f9fafb;
+        }
+
+        .mini-stat {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 0.7rem 0.8rem;
+        }
+
+        .mini-stat .label {
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0.75;
+            margin-bottom: 0.2rem;
+        }
+
+        .mini-stat .value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .section-subtitle {
+            color: #6b7280;
+            margin-bottom: 0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0.1rem;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .summary-row:last-child {
+            border-bottom: 0;
+        }
+
+        .schedule-item {
+            border-left: 4px solid #111827;
+            background: linear-gradient(90deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            padding: 0.8rem 0.9rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .schedule-item:last-child { margin-bottom: 0; }
+
+        .table thead th {
+            color: #374151;
+            font-size: 0.76rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f8fafc;
+        }
+
+        .table td {
+            vertical-align: middle;
+            color: #374151;
+            padding-top: 0.9rem;
+            padding-bottom: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/nav :: nav}"></div>
+
+    <div class="container py-4">
+        <div class="overview-hero mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                <div>
+                    <div class="overview-badge">Today</div>
+                    <h1 class="hero-title mt-3 mb-1">Welcome to Men's Salon</h1>
+                    <p class="muted-light mb-0">Today’s overview and quick access to bookings.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap top-actions">
+                    <a th:href="@{/appointments/new}" class="btn btn-light btn-lg">Book New</a>
+                    <a th:href="@{/reports}" class="btn btn-outline-light btn-lg">Reports</a>
+                </div>
+            </div>
+
+            <div class="status-strip">
+                <span class="status-pill" th:text="'Booked: ' + ${scheduledCount}">Booked: 0</span>
+                <span class="status-pill" th:text="'Completed: ' + ${completedCount}">Completed: 0</span>
+                <span class="status-pill" th:text="'Revenue: ' + ${'₹' + #numbers.formatDecimal(totalRevenue, 1, 2)}">Revenue: ₹0.00</span>
+                <span class="status-pill" th:text="'Payroll: ' + ${'₹' + #numbers.formatDecimal(monthlyPayroll, 1, 2)}">Payroll: ₹0.00</span>
+                <span class="status-pill" th:text="'Top service: ' + ${topServiceName}">Top service: N/A</span>
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-3">
+                    <div class="mini-stat">
+                        <div class="label">Scheduled</div>
+                        <p class="value" th:text="${scheduledCount}">0</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mini-stat">
+                        <div class="label">Completed</div>
+                        <p class="value" th:text="${completedCount}">0</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mini-stat">
+                        <div class="label">Revenue</div>
+                        <p class="value" th:text="${'₹' + #numbers.formatDecimal(totalRevenue, 1, 2)}">₹0.00</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mini-stat">
+                        <div class="label">Payroll</div>
+                        <p class="value" th:text="${'₹' + #numbers.formatDecimal(monthlyPayroll, 1, 2)}">₹0.00</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mini-stat">
+                        <div class="label">Top Service</div>
+                        <p class="value" th:text="${topServiceName}">N/A</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <div class="stat-label">Revenue</div>
+                        <p class="stat-value" th:text="${'₹' + #numbers.formatDecimal(totalRevenue, 1, 2)}">₹0.00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <div class="stat-label">Top Barber</div>
+                        <p class="stat-subtle" th:text="${topBarberName}">N/A</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <div class="stat-label">Best Service</div>
+                        <p class="stat-subtle" th:text="${topServiceName}">N/A</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <div class="stat-label">Payroll</div>
+                        <p class="stat-value" th:text="${'₹' + #numbers.formatDecimal(monthlyPayroll, 1, 2)}">₹0.00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <div class="stat-label">Scheduled</div>
+                        <p class="stat-value" th:text="${scheduledCount}">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h4 class="section-title mb-3">Booking Summary</h4>
+                        <div class="summary-row">
+                            <span>Scheduled</span>
+                            <span class="badge bg-primary rounded-pill" th:text="${scheduledCount}">0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Completed</span>
+                            <span class="badge bg-success rounded-pill" th:text="${completedCount}">0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Revenue</span>
+                            <span class="badge bg-warning text-dark rounded-pill" th:text="${'₹' + #numbers.formatDecimal(totalRevenue, 1, 2)}">₹0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Monthly Payroll</span>
+                            <span class="badge bg-dark rounded-pill" th:text="${'₹' + #numbers.formatDecimal(monthlyPayroll, 1, 2)}">₹0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h4 class="section-title mb-3">Today’s Schedule</h4>
+                        <div th:if="${#lists.isEmpty(todayAppointments)}" class="text-muted">No appointments for today.</div>
+                        <div th:each="appt : ${todayAppointments}" class="schedule-item">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <strong th:text="${appt.customer.name}">Customer</strong>
+                                <span class="badge"
+                                      th:classappend="${appt.status.name() == 'SCHEDULED' ? 'bg-primary' : (appt.status.name() == 'IN_PROGRESS' ? 'bg-warning text-dark' : (appt.status.name() == 'COMPLETED' ? 'bg-success' : 'bg-secondary'))}"
+                                      th:text="${appt.status}">SCHEDULED</span>
+                            </div>
+                            <div class="small text-muted mt-1" th:text="${appt.barber.name + ' • ' + #temporals.format(appt.appointmentDateTime, 'HH:mm')}">Barber • Time</div>
+                            <div th:if="${appt.status.name() == 'SCHEDULED' and appt.appointmentDateTime.toLocalDate().equals(T(java.time.LocalDate).now()) and appt.appointmentDateTime.toLocalTime().equals(T(java.time.LocalTime).now())}"
+                                 class="mt-2 text-warning fw-semibold small">
+                                Warning: appointment time has reached, but it has not started yet.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <h4 class="section-title mb-3">Currently Working</h4>
+                        <div th:if="${#lists.isEmpty(activeWorkLogs)}" class="text-muted">No active work reported by staff.</div>
+                        <div th:each="workLog : ${activeWorkLogs}" class="schedule-item">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <strong th:text="${workLog.barber.name}">Staff member</strong>
+                                <span class="badge bg-warning text-dark">In progress</span>
+                            </div>
+                            <div class="small text-muted mt-1" th:text="${workLog.activitySummary}">Service or task</div>
+                            <div class="small text-muted" th:text="${'Started ' + #temporals.format(workLog.startedAt, 'HH:mm')}">Started 09:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+            <div class="col-12">
+                <div class="card dashboard-card">
+                    <div class="card-body">
+                        <h4 class="section-title mb-3">Upcoming Bookings</h4>
+                        <div th:if="${#lists.isEmpty(upcomingAppointments)}" class="text-muted">No upcoming appointments.</div>
+                        <div class="table-responsive" th:unless="${#lists.isEmpty(upcomingAppointments)}">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Barber</th>
+                                        <th>Service</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="appt : ${upcomingAppointments}">
+                                        <td>
+                                            <span th:text="${appt.customer.name}">Customer</span>
+                                            <span th:if="${appt.status.name() == 'SCHEDULED' and appt.appointmentDateTime.toLocalDate().equals(T(java.time.LocalDate).now()) and appt.appointmentDateTime.toLocalTime().equals(T(java.time.LocalTime).now())}"
+                                                  class="badge bg-warning text-dark ms-2">Not started yet</span>
+                                        </td>
+                                        <td th:text="${appt.barber.name}">Barber</td>
+                                        <td th:text="${appt.serviceSummary}">Service</td>
+                                        <td th:text="${#temporals.format(appt.appointmentDateTime, 'MMM d, yyyy • HH:mm')}">Date</td>
+                                        <td>
+                                            <span class="badge"
+                                                  th:classappend="${appt.status.name() == 'SCHEDULED' ? 'bg-primary' : (appt.status.name() == 'IN_PROGRESS' ? 'bg-warning text-dark' : (appt.status.name() == 'COMPLETED' ? 'bg-success' : 'bg-secondary'))}"
+                                                  th:text="${appt.status}">Status</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

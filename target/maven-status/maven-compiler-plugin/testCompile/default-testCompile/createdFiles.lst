@@ -1,0 +1,5 @@
+com\example\salon\service\AppointmentServiceTest.class
+com\example\salon\service\WhatsAppBotServiceTest.class
+com\example\salon\repository\EmployeeWorkLogRepositoryTest.class
+com\example\salon\service\AttendanceServiceTest.class
+com\example\salon\service\AppointmentServiceTest$1.class
